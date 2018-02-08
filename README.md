@@ -8,7 +8,7 @@ This Adroid app provides a simple way to look up local, and not so local, weathe
 ## Development Thought Process
 Implementing the functionality of the app occured in three main phases.  The first phase was to use Android's map layout to retreive Lat/Lon on map clicks.  The next phase was getting local weather data from the OpenWeatherMap api utilizing Lat/Lon coordinates.  Finally the UI was put in place to display the data in modals.  Then the extra creadit feature was added.
 
-Development was done on Ubuntu using Androird studio with an Android emulator (API 25).
+Development was done on Ubuntu using Android studio with an Android emulator (API 25).
 
 ## Required Functionality
 This app loads with a map and a marker over the Reston Town Center:
