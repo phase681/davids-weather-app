@@ -2,22 +2,16 @@
  * Created by David Mahen
  *
  * This is the main activity for the weather app.  It handles events for both the map
- * and the zipcode EditText.  There is also a callback from the asynchronous HTTP GET
- * request to OpenWeatherMap to display the local weather results in a modal dialog.
+ * and the zipcode EditText.
  *
  **/
 package com.example.x.davidsweatherapp;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -52,16 +46,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // Sets an intent filter for messages from the OpenWeatherConsultant class.
-        LocalBroadcastManager.getInstance(this).registerReceiver(resultReceiver,
-                new IntentFilter("com.example.x.davidsweatherapp"));
-
         final EditText zipText = (EditText) findViewById(R.id.zipText);
         // Instantiate an InputMethodManager to help cleanup the keyboard when not being used.
         inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // Event handler for executing a weather query when the "Done" keyboard button is pressed
-        // or when the "Emter" key is pressed.
+        // or when the "Enter" key is pressed.
         zipText.setOnEditorActionListener(new EditText.OnEditorActionListener(){
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
@@ -110,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }
-                final MyWeather myWeather = new MyWeather(getApplicationContext());
+                final MyWeather myWeather = new MyWeather(getApplicationContext(), getSupportFragmentManager());
                 String lat = Double.toString(latLng.latitude);
                 String lon = Double.toString(latLng.longitude);
                 myWeather.getWeather(lat, lon);
@@ -119,20 +109,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    /**
-     * This BroadcastReciever receives an intent from the OpenWeatherConsultant
-     * that contains a JSON string with local weather data to be displayed in
-     * a modal dialog.
-     **/
-    private BroadcastReceiver resultReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("jsonData");
-            WeatherData reportData = new WeatherData(message);
-            DialogFragment testDialog = WeatherDialog.newInstance("Local Weather", reportData);
-            testDialog.show(getSupportFragmentManager(), "localWeather");
-        }
-    };
 
     /**
      * @param zipText
@@ -154,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Move the map to match the entered zipcode while performing a weather query.
             mMap.moveCamera(CameraUpdateFactory.newLatLng(local));
             mMap.moveCamera(CameraUpdateFactory.zoomTo(17));
-            final MyWeather myWeather = new MyWeather(getApplicationContext());
+            final MyWeather myWeather = new MyWeather(getApplicationContext(), getSupportFragmentManager());
             myWeather.getWeather(zipText.getText().toString());
             inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
